@@ -1,7 +1,8 @@
+import Login from "../components/Auth/Login";
 import React from "react";
 
 const Splash = () => {
-  return <div>Splash Page</div>;
+	return <Login />;
 };
 
 export default Splash;
