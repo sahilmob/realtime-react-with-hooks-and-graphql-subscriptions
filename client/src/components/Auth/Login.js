@@ -1,9 +1,9 @@
+import { IS_LOGGED_IN, LOGIN_USER } from "../../actionTypes";
 import React, { useContext } from "react";
 
 import Context from "../../context";
 import { GoogleLogin } from "react-google-login";
 import { GraphQLClient } from "graphql-request";
-import { LOGIN_USER } from "../../actionTypes";
 import { ME_QUERY } from "../../graphql/queries";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
@@ -20,6 +20,7 @@ const Login = ({ classes }) => {
 			const { me } = await client.request(ME_QUERY);
 			console.log(me);
 			dispatch({ type: LOGIN_USER, payload: me });
+			dispatch({ type: IS_LOGGED_IN, payload: googleUser.isSignedIn() });
 		} catch (err) {
 			onFailure(err);
 		}
