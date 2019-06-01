@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Context from "../context";
 import MapIcon from "@material-ui/icons/Map";
+import Signout from "./Auth/Signout";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
@@ -32,6 +33,7 @@ const Header = ({ classes }) => {
 							</Typography>
 						</div>
 					)}
+					<Signout />
 				</Toolbar>
 			</AppBar>
 		</div>
