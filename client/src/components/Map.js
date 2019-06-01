@@ -2,10 +2,10 @@ import { CREATE_DRAFT, UPDATE_DRAFT_LOCATION } from "../actionTypes";
 import React, { useContext, useEffect, useState } from "react";
 import ReactMapGL, { Marker, NavigationControl } from "react-map-gl";
 
+import Blog from "./Blog";
 import Context from "../context";
 import { MAPBOX_API_KEY } from "../constants";
 import PinIcon from "./PinIcon";
-import { stat } from "fs";
 import { withStyles } from "@material-ui/core/styles";
 
 // import Button from "@material-ui/core/Button";
@@ -84,6 +84,7 @@ const Map = ({ classes }) => {
 					</Marker>
 				)}
 			</ReactMapGL>
+			<Blog />
 		</div>
 	);
 };
