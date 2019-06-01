@@ -1,4 +1,4 @@
-import { IS_LOGGED_IN, LOGIN_USER } from "./actionTypes";
+import { IS_LOGGED_IN, LOGIN_USER, SIGNOUT_USER } from "./actionTypes";
 
 export default function reducer(state, { type, payload }) {
 	switch (type) {
@@ -11,6 +11,12 @@ export default function reducer(state, { type, payload }) {
 			return {
 				...state,
 				isAuth: payload
+			};
+		case SIGNOUT_USER:
+			return {
+				...state,
+				currentUser: null,
+				isAuth: false
 			};
 		default:
 			return state;
