@@ -1,24 +1,52 @@
+import React, { useContext, useState } from "react";
+
+import { CREATE_COMMENT } from "../../actionTypes";
+import { CREATE_COMMENT_MUTATION } from "../../graphql/mutations";
 import ClearIcon from "@material-ui/icons/Clear";
+import Context from "../../context";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import InputBase from "@material-ui/core/InputBase";
-import React from "react";
 import SendIcon from "@material-ui/icons/Send";
+import { useClient } from "../../client";
 import { withStyles } from "@material-ui/core";
 
 const CreateComment = ({ classes }) => {
+	const client = useClient();
+	const { state, dispatch } = useContext(Context);
+	const [comment, setComment] = useState("");
+
+	const handleSubmitComment = async () => {
+		const { createComment } = await client.request(CREATE_COMMENT_MUTATION, {
+			pinId: state.currentPin._id,
+			text: comment
+		});
+		dispatch({ type: CREATE_COMMENT, payload: createComment });
+		setComment("");
+	};
+
 	return (
 		<>
 			<form className={classes.form}>
-				<IconButton className={classes.clearButton}>
+				<IconButton
+					onClick={() => setComment("")}
+					disabled={!comment.trim()}
+					className={classes.clearButton}
+				>
 					<ClearIcon />
 				</IconButton>
 				<InputBase
 					className={classes.input}
 					placeholder="Add Comment"
 					multiline={true}
+					onChange={e => setComment(e.target.value)}
+					value={comment}
 				/>
-				<IconButton className={classes.sendButton}>
+				<IconButton
+					disabled={!comment.trim()}
+					className={classes.sendButton}
+					onClick={handleSubmitComment}
+				>
 					<SendIcon />
 				</IconButton>
 			</form>
