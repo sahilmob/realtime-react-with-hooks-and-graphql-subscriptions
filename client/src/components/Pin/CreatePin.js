@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 
 import AddAPhotoIcon from "@material-ui/icons/AddAPhotoTwoTone";
 import Button from "@material-ui/core/Button";
+import { CLOUDINARY_CLOUD_NAME } from "../../constants";
 import ClearIcon from "@material-ui/icons/Clear";
 import Context from "../../context";
 import { DISCARD_DRAFT } from "../../actionTypes";
@@ -9,6 +10,7 @@ import LandscapeIcon from "@material-ui/icons/LandscapeOutlined";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
+import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 
 const CreatePin = ({ classes }) => {
@@ -18,9 +20,23 @@ const CreatePin = ({ classes }) => {
 	const [image, setImage] = useState("");
 	const [content, setContent] = useState("");
 
-	const handleSubmit = event => {
+	const handleImageUpload = async () => {
+		const fd = new FormData();
+		fd.append("file", image);
+		fd.append("upload_preset", "geopins");
+		fd.append("cloud_name", CLOUDINARY_CLOUD_NAME);
+		const res = await axios.post(
+			`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+			fd
+		);
+
+		return res.data.url;
+	};
+
+	const handleSubmit = async event => {
 		event.preventDefault();
-		console.log(title, image, content);
+		const url = await handleImageUpload();
+		console.log({ title, image, url, content });
 		clearInputs();
 	};
 
