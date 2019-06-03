@@ -5,6 +5,7 @@ import {
 	GET_PINS,
 	IS_LOGGED_IN,
 	LOGIN_USER,
+	SET_PIN,
 	SIGNOUT_USER,
 	UPDATE_DRAFT_LOCATION
 } from "./actionTypes";
@@ -30,6 +31,7 @@ export default function reducer(state, { type, payload }) {
 		case CREATE_DRAFT:
 			return {
 				...state,
+				currentPin: null,
 				draft: {
 					latitude: 0,
 					longitude: 0
@@ -56,6 +58,12 @@ export default function reducer(state, { type, payload }) {
 			return {
 				...state,
 				pins: [...prevPins, newPin]
+			};
+		case SET_PIN:
+			return {
+				...state,
+				currentPin: payload,
+				draft: null
 			};
 		default:
 			return state;
