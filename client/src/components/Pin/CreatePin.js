@@ -3,9 +3,11 @@ import React, { useContext, useState } from "react";
 import AddAPhotoIcon from "@material-ui/icons/AddAPhotoTwoTone";
 import Button from "@material-ui/core/Button";
 import { CLOUDINARY_CLOUD_NAME } from "../../constants";
+import { CREATE_PIN_MUTATION } from "../../graphql/mutations";
 import ClearIcon from "@material-ui/icons/Clear";
 import Context from "../../context";
 import { DISCARD_DRAFT } from "../../actionTypes";
+import { GraphQLClient } from "graphql-request";
 import LandscapeIcon from "@material-ui/icons/LandscapeOutlined";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
 import TextField from "@material-ui/core/TextField";
@@ -14,11 +16,12 @@ import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 
 const CreatePin = ({ classes }) => {
-	const { dispatch } = useContext(Context);
+	const { state, dispatch } = useContext(Context);
 
 	const [title, setTitle] = useState("");
 	const [image, setImage] = useState("");
 	const [content, setContent] = useState("");
+	const [submitting, setSubmitting] = useState(false);
 
 	const handleImageUpload = async () => {
 		const fd = new FormData();
@@ -34,10 +37,33 @@ const CreatePin = ({ classes }) => {
 	};
 
 	const handleSubmit = async event => {
-		event.preventDefault();
-		const url = await handleImageUpload();
-		console.log({ title, image, url, content });
-		clearInputs();
+		try {
+			event.preventDefault();
+			setSubmitting(true);
+			const idToken = window.gapi.auth2
+				.getAuthInstance()
+				.currentUser.get()
+				.getAuthResponse().id_token;
+			const client = new GraphQLClient("http://localhost:4000/graphql", {
+				headers: { authorization: idToken }
+			});
+			const url = await handleImageUpload();
+			const { latitude, longitude } = state.draft;
+			const { createPin } = await client.request(CREATE_PIN_MUTATION, {
+				title,
+				content,
+				image: url,
+				latitude,
+				longitude
+			});
+
+			console.log(`Pin created`, { createPin });
+			setSubmitting(false);
+			handleDiscardDraft();
+		} catch (err) {
+			setSubmitting(false);
+			console.error(`Error creating pin ${err}`);
+		}
 	};
 
 	const handleDiscardDraft = () => {
@@ -114,7 +140,7 @@ const CreatePin = ({ classes }) => {
 					variant="contained"
 					color="secondary"
 					onClick={handleSubmit}
-					disabled={!title.trim() || !image || !content.trim()}
+					disabled={!title.trim() || !image || !content.trim() || submitting}
 				>
 					Submit
 					<SaveIcon className={classes.rightIcon} />
