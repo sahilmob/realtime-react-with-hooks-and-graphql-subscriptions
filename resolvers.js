@@ -28,6 +28,21 @@ module.exports = {
 			const pinAdded = await Pin.populate(newPin, "author");
 			return pinAdded;
 		},
+		createComment: authenticated(async (root, args, ctx, info) => {
+			const newComment = { text: args.text, author: ctx.currentUser._id };
+			const pinUpdated = await Pin.findByIdAndUpdate(
+				{
+					_id: args.pinId
+				},
+				{
+					$push: { comments: newComment }
+				},
+				{ new: true }
+			)
+				.populate("author")
+				.populate("comments.author");
+			return pinUpdated;
+		}),
 		deletePin: authenticated(async (root, args, ctx, info) => {
 			const pinDeleted = await Pin.findOneAndDelete({ _id: args.pinId }).exec();
 			return pinDeleted;
