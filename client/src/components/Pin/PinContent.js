@@ -1,7 +1,9 @@
 import React, { useContext } from "react";
 
 import AccessTimeIcon from "@material-ui/icons/AccessTime";
+import Comments from "../Comment/Comments";
 import Context from "../../context";
+import CreateComment from "../Comment/CreateComment";
 import FaceIcon from "@material-ui/icons/Face";
 import Typography from "@material-ui/core/Typography";
 import { withStyles } from "@material-ui/core/styles";
@@ -35,6 +37,8 @@ const PinContent = ({ classes }) => {
 			<Typography variant="subtitle1" gutterBottom>
 				{content}
 			</Typography>
+			<CreateComment />
+			<Comments comments={comments} />
 		</div>
 	);
 };
