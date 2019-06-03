@@ -6,3 +6,4 @@ export const UPDATE_DRAFT_LOCATION = "UPDATE_DRAFT_LOCATION";
 export const DISCARD_DRAFT = "DISCARD_DRAFT";
 export const GET_PINS = "GET_PINS";
 export const CREATE_PIN = "CREATE_PIN";
+export const SET_PIN = "SET_PIN";
