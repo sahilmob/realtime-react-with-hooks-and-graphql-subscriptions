@@ -1,10 +1,17 @@
 import {
+	CREATE_COMMENT,
 	CREATE_DRAFT,
+	CREATE_PIN,
 	DELETE_PIN,
 	GET_PINS,
 	SET_PIN,
 	UPDATE_DRAFT_LOCATION
 } from "../actionTypes";
+import {
+	PIN_ADDED_SUBSCRIPTION,
+	PIN_DELETED_SUBSCRIPTION,
+	PIN_UPDATED_SUBSCRIPTION
+} from "../graphql/subscriptions";
 import React, { useContext, useEffect, useState } from "react";
 import ReactMapGL, { Marker, NavigationControl, Popup } from "react-map-gl";
 
@@ -16,6 +23,7 @@ import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
 import { GET_PINS_QUERY } from "../graphql/queries";
 import { MAPBOX_API_KEY } from "../constants";
 import PinIcon from "./PinIcon";
+import { Subscription } from "react-apollo";
 import Typography from "@material-ui/core/Typography";
 import differenceInMinutes from "date-fns/difference_in_minutes";
 import { useClient } from "../client";
@@ -82,11 +90,10 @@ const Map = ({ classes }) => {
 	const isAuthUser = () => state.currentUser._id === popup.author._id;
 
 	const handleDeletePin = async popup => {
-		const { deletePin } = await client.request(DELETE_PIN_MUTATION, {
+		await client.request(DELETE_PIN_MUTATION, {
 			pinId: popup._id
 		});
 		setPopup(null);
-		dispatch({ type: DELETE_PIN, payload: deletePin });
 	};
 
 	return (
@@ -170,6 +177,30 @@ const Map = ({ classes }) => {
 					</Popup>
 				)}
 			</ReactMapGL>
+			<Subscription
+				subscription={PIN_ADDED_SUBSCRIPTION}
+				onSubscriptionData={({ subscriptionData }) => {
+					const { pinAdded } = subscriptionData.data;
+					console.log(pinAdded);
+					dispatch({ type: CREATE_PIN, payload: pinAdded });
+				}}
+			/>
+			<Subscription
+				subscription={PIN_UPDATED_SUBSCRIPTION}
+				onSubscriptionData={({ subscriptionData }) => {
+					const { pinUpdated } = subscriptionData.data;
+					console.log(pinUpdated);
+					dispatch({ type: CREATE_COMMENT, payload: pinUpdated });
+				}}
+			/>
+			<Subscription
+				subscription={PIN_DELETED_SUBSCRIPTION}
+				onSubscriptionData={({ subscriptionData }) => {
+					const { pinDeleted } = subscriptionData.data;
+					console.log(pinDeleted);
+					dispatch({ type: DELETE_PIN, payload: pinDeleted });
+				}}
+			/>
 			<Blog />
 		</div>
 	);
