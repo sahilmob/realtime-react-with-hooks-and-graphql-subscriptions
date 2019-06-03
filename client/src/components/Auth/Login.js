@@ -1,6 +1,7 @@
 import { IS_LOGGED_IN, LOGIN_USER } from "../../actionTypes";
 import React, { useContext } from "react";
 
+import { BASE_URL } from "../../client";
 import Context from "../../context";
 import { GoogleLogin } from "react-google-login";
 import { GraphQLClient } from "graphql-request";
@@ -14,7 +15,7 @@ const Login = ({ classes }) => {
 	const onSuccess = async googleUser => {
 		try {
 			const idToken = googleUser.getAuthResponse().id_token;
-			const client = new GraphQLClient("http://localhost:4000/graphql", {
+			const client = new GraphQLClient(BASE_URL, {
 				headers: { authorization: idToken }
 			});
 			const { me } = await client.request(ME_QUERY);
