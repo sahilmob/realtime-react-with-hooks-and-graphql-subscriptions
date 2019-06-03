@@ -13,9 +13,11 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import axios from "axios";
 import { useClient } from "../../client";
+import { unstable_useMediaQuery as useMediaQuery } from "@material-ui/core/useMediaQuery";
 import { withStyles } from "@material-ui/core/styles";
 
 const CreatePin = ({ classes }) => {
+	const mobileSize = useMediaQuery("(max-width: 650px)");
 	const { state, dispatch } = useContext(Context);
 	const client = useClient();
 
@@ -110,7 +112,7 @@ const CreatePin = ({ classes }) => {
 					name="content"
 					label="content"
 					multiline
-					rows="6"
+					rows={mobileSize ? "3" : "6"}
 					margin="normal"
 					fullWidth
 					variant="outlined"

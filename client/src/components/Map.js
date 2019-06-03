@@ -27,6 +27,7 @@ import { Subscription } from "react-apollo";
 import Typography from "@material-ui/core/Typography";
 import differenceInMinutes from "date-fns/difference_in_minutes";
 import { useClient } from "../client";
+import { unstable_useMediaQuery as useMediaQuery } from "@material-ui/core/useMediaQuery";
 import { withStyles } from "@material-ui/core/styles";
 
 const INITIAL_VIEWPORT = {
@@ -37,6 +38,7 @@ const INITIAL_VIEWPORT = {
 
 const Map = ({ classes }) => {
 	const client = useClient();
+	const mobileSize = useMediaQuery("(max-width: 650px)");
 	const { state, dispatch } = useContext(Context);
 
 	useEffect(() => {
@@ -97,7 +99,7 @@ const Map = ({ classes }) => {
 	};
 
 	return (
-		<div className={classes.root}>
+		<div className={mobileSize ? classes.rootMobile : classes.root}>
 			<ReactMapGL
 				width="100vw"
 				height="calc(100vh - 64px)"
@@ -105,6 +107,7 @@ const Map = ({ classes }) => {
 				mapboxApiAccessToken={MAPBOX_API_KEY}
 				onViewportChange={newViewport => setViewport(newViewport)}
 				onClick={handleMapClick}
+				scrollZoom={!mobileSize}
 				{...viewport}
 			>
 				<div className={classes.navigationControl}>
