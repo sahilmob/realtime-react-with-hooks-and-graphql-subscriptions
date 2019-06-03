@@ -1,11 +1,13 @@
-import { CREATE_DRAFT, UPDATE_DRAFT_LOCATION } from "../actionTypes";
+import { CREATE_DRAFT, GET_PINS, UPDATE_DRAFT_LOCATION } from "../actionTypes";
 import React, { useContext, useEffect, useState } from "react";
 import ReactMapGL, { Marker, NavigationControl } from "react-map-gl";
 
 import Blog from "./Blog";
 import Context from "../context";
+import { GET_PINS_QUERY } from "../graphql/queries";
 import { MAPBOX_API_KEY } from "../constants";
 import PinIcon from "./PinIcon";
+import { useClient } from "../client";
 import { withStyles } from "@material-ui/core/styles";
 
 // import Button from "@material-ui/core/Button";
@@ -19,7 +21,13 @@ const INITIAL_VIEWPORT = {
 };
 
 const Map = ({ classes }) => {
+	const client = useClient();
 	const { state, dispatch } = useContext(Context);
+
+	useEffect(() => {
+		getPins();
+	}, []);
+
 	const [viewport, setViewport] = useState(INITIAL_VIEWPORT);
 	const [userPosition, setUserPosition] = useState(null);
 
@@ -35,6 +43,11 @@ const Map = ({ classes }) => {
 				setUserPosition({ latitude, longitude });
 			});
 		}
+	};
+
+	const getPins = async () => {
+		const { getPins } = await client.request(GET_PINS_QUERY);
+		dispatch({ type: GET_PINS, payload: getPins });
 	};
 
 	const handleMapClick = ({ lngLat, leftButton }) => {
@@ -83,6 +96,19 @@ const Map = ({ classes }) => {
 						<PinIcon size={40} color="hotpink" />
 					</Marker>
 				)}
+				{state.pins.map(pin => {
+					return (
+						<Marker
+							key={pin._id}
+							latitude={pin.latitude}
+							longitude={pin.longitude}
+							offsetLeft={-19}
+							offsetTop={-37}
+						>
+							<PinIcon size={40} color="darkblue" />
+						</Marker>
+					);
+				})}
 			</ReactMapGL>
 			<Blog />
 		</div>
