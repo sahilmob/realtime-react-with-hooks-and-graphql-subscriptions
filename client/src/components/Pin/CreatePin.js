@@ -1,3 +1,4 @@
+import { CREATE_PIN, DISCARD_DRAFT } from "../../actionTypes";
 import React, { useContext, useState } from "react";
 
 import AddAPhotoIcon from "@material-ui/icons/AddAPhotoTwoTone";
@@ -6,7 +7,6 @@ import { CLOUDINARY_CLOUD_NAME } from "../../constants";
 import { CREATE_PIN_MUTATION } from "../../graphql/mutations";
 import ClearIcon from "@material-ui/icons/Clear";
 import Context from "../../context";
-import { DISCARD_DRAFT } from "../../actionTypes";
 import LandscapeIcon from "@material-ui/icons/LandscapeOutlined";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
 import TextField from "@material-ui/core/TextField";
@@ -51,7 +51,7 @@ const CreatePin = ({ classes }) => {
 				longitude
 			});
 
-			console.log(`Pin created`, { createPin });
+			dispatch({ type: CREATE_PIN, payload: createPin });
 			setSubmitting(false);
 			handleDiscardDraft();
 		} catch (err) {
