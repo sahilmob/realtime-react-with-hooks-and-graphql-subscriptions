@@ -1,4 +1,5 @@
 import {
+	CREATE_COMMENT,
 	CREATE_DRAFT,
 	CREATE_PIN,
 	DELETE_PIN,
@@ -66,13 +67,25 @@ export default function reducer(state, { type, payload }) {
 				currentPin: payload,
 				draft: null
 			};
-		case DELETE_PIN:
+		case DELETE_PIN: {
 			const updatedPins = state.pins.filter(pin => pin._id !== payload._id);
 			return {
 				...state,
 				pins: updatedPins,
 				currentPin: null
 			};
+		}
+		case CREATE_COMMENT: {
+			const updatedCurrentPin = payload;
+			const updatedPins = state.pins.map(pin =>
+				pin._id === updatedCurrentPin._id ? updatedCurrentPin : pin
+			);
+			return {
+				...state,
+				pins: updatedPins,
+				currentPin: updatedCurrentPin
+			};
+		}
 		default:
 			return state;
 	}
